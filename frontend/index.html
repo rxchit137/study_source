@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySource AI</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="toolbar">
+                <input type="file" id="file-upload" multiple accept=".pdf,.txt">
+                <button id="upload-btn">Upload</button>
+                <div class="nav-controls">
+                    <button id="prev-page">Prev</button>
+                    <span>Page: <span id="page-num">0</span> / <span id="page-count">0</span></span>
+                    <button id="next-page">Next</button>
+                </div>
+            </div>
+            <div id="file-list" class="file-list"></div>
+            <div id="pdf-viewer-container">
+                <canvas id="pdf-render"></canvas>
+                <div id="txt-viewer" class="hidden"></div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="chat-header">
+                <h2>Study Assistant</h2>
+                <div class="mode-selector">
+                    <label for="mode">Mode:</label>
+                    <select id="mode">
+                        <option value="normal">Normal</option>
+                        <option value="simple">Simple</option>
+                        <option value="summary">Summary</option>
+                    </select>
+                </div>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <div class="message bot">Upload your study material to get started.</div>
+            </div>
+            <div class="chat-input-area">
+                <textarea id="chat-input" placeholder="Ask a question..."></textarea>
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

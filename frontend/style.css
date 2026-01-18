@@ -1,0 +1,23 @@
+body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; }
+.container { display: flex; height: 100vh; }
+.left-panel { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; background-color: #fff; overflow: hidden; }
+.right-panel { width: 450px; display: flex; flex-direction: column; background-color: #fff; box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
+.toolbar { padding: 12px; background-color: #f8f9fa; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
+.file-list { padding: 5px 12px; background-color: #fff; border-bottom: 1px solid #eee; display: flex; gap: 10px; overflow-x: auto; font-size: 0.85em; }
+.file-item { padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+.file-item.active { background-color: #e7f3ff; border-color: #007bff; color: #007bff; }
+#pdf-viewer-container { flex: 1; overflow: auto; display: flex; justify-content: center; align-items: flex-start; padding: 20px; background-color: #525659; }
+#pdf-render { box-shadow: 0 0 15px rgba(0,0,0,0.3); background-color: #fff; }
+#txt-viewer { white-space: pre-wrap; padding: 30px; width: 80%; background-color: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.3); font-size: 1.1em; line-height: 1.5; }
+.chat-header { padding: 15px; background-color: #1a73e8; color: white; display: flex; justify-content: space-between; align-items: center; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background-color: #fff; }
+.message { padding: 12px 16px; border-radius: 12px; max-width: 85%; line-height: 1.4; word-wrap: break-word; }
+.message.bot { background-color: #f1f3f4; align-self: flex-start; color: #202124; }
+.message.user { background-color: #e8f0fe; align-self: flex-end; color: #1967d2; }
+.chat-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+#chat-input { flex: 1; height: 50px; padding: 10px; border-radius: 8px; border: 1px solid #ddd; resize: none; font-family: inherit; }
+button { padding: 8px 16px; cursor: pointer; background-color: #1a73e8; color: white; border: none; border-radius: 6px; font-weight: 600; }
+button:hover { background-color: #1765cc; }
+.hidden { display: none; }
+.sources { font-size: 0.75em; color: #5f6368; margin-top: 8px; padding-top: 8px; border-top: 1px solid #dadce0; font-style: italic; }
+.nav-controls { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
