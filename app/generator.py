@@ -2,43 +2,48 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 
 class PhiGenerator:
-    def __init__(self, model_id="TinyLlama/TinyLlama-1.1B-Chat-v1.0"):
+    def __init__(self, model_id="gpt2"):
         self.device = "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
-        self.model = AutoModelForCausalLM.from_pretrained(
+        # GPT2 doesn't have a pad token by default
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+
+        base_model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            torch_dtype=torch.float32,
             low_cpu_mem_usage=True
+        )
+
+        # Apply dynamic quantization for int8
+        self.model = torch.quantization.quantize_dynamic(
+            base_model, {torch.nn.Linear}, dtype=torch.qint8
         ).to(self.device)
         self.model.eval()
 
-    def generate(self, prompt, max_new_tokens=250):
+    def generate(self, prompt, max_new_tokens=150):
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=max_new_tokens,
                 do_sample=True,
-                temperature=0.1,
+                temperature=0.7,
                 top_k=50,
-                top_p=0.95,
-                pad_token_id=self.tokenizer.eos_token_id
+                top_p=0.9,
+                pad_token_id=self.tokenizer.pad_token_id
             )
 
         response = self.tokenizer.decode(outputs[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
         return response.strip()
 
     def get_prompt_template(self, mode, query, context):
-        system_msg = "You are StudySource AI, a helpful study assistant. Answer questions ONLY based on the provided context. If the answer is not in the context, say 'Not in uploaded sources'. Do not use external knowledge."
-
+        # GPT-2 is a base model, so we use a clear instructional prompt structure
         if mode == "simple":
-            user_msg = f"Context: {context}\n\nQuestion: {query}\n\nInstructions: Explain like I'm 12. Use simple words. Max 5 sentences. No metaphors. Answer based ONLY on the context."
+            return f"The following is a study guide context:\n{context}\n\nQuestion: {query}\nInstruction: Explain the answer simply for a 12-year old student using at most 5 sentences. Only use the context provided.\nAnswer:"
         elif mode == "summary":
-            user_msg = f"Context: {context}\n\nTask: Provide a bulleted summary of the context above. Use 5-7 points. Content-faithful only."
+            return f"The following is a study guide context:\n{context}\n\nInstruction: Provide a short bulleted summary of the context using 5-7 points.\nSummary:"
         else: # Normal
-            user_msg = f"Context: {context}\n\nQuestion: {query}\n\nInstructions: Provide a clear explanation based ONLY on the context above. If not found, say 'Not in uploaded sources'."
-
-        return f"<|system|>\n{system_msg}</s>\n<|user|>\n{user_msg}</s>\n<|assistant|>\n"
+            return f"The following is a study guide context:\n{context}\n\nQuestion: {query}\nInstruction: Provide a clear explanation based only on the context above. If the information is not present, say 'Not in uploaded sources'.\nAnswer:"
 
     def generate_grounded_answer(self, mode, query, retrieved_results):
         if not retrieved_results:
